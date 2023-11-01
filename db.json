@@ -1,0 +1,11 @@
+{
+  "todos": [
+    {
+      "id": 1698772969741,
+      "title": "New Task",
+      "priority": "HIGH",
+      "createdAt": "11:22:49 PM",
+      "completed": false
+    }
+  ]
+}
