@@ -28,6 +28,7 @@ const Login = () => {
     .then(userCredential => {
       setSuccess('Login success')
       toast.success("Login success", {autoClose:1000})
+      navigate("/todo")
     })
     .catch(error=>{
       setError(error.message)

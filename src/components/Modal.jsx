@@ -35,7 +35,6 @@ const Modal = ({
     const priority = current;
     const time = new Date().toLocaleTimeString();
     const newTodo = {
-      id: parseInt(Date.now() + Math.random()),
       title: taskTitle,
       priority: priority,
       createdAt: time,
@@ -69,6 +68,7 @@ const Modal = ({
       const res = await updateMutation.mutateAsync(updateTodo);
       toast.success("Updated Successfully", { autoClose: 1000 });
     } catch (error) {
+      console.log("Update error=========> ", error)
       toast.error(error.message, { autoClose: 2000 });
     }
     setIsEditable(false);

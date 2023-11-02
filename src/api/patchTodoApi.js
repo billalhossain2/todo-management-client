@@ -1,9 +1,12 @@
-import axios from 'axios';
-import React from 'react'
+import axios from "axios";
+import React from "react";
 
-const patchTodoApi = async(todo) => {
-    const response = await axios.patch(`http://localhost:8000/todos/${todo.id}`, {completed:!todo.completed})
-    return response.data;
-}
+const patchTodoApi = async (todo) => {
+  const response = await axios.patch(
+    `https://user-management-server-sand.vercel.app/todos/${todo._id}`,
+    { completed: !todo.completed }
+  );
+  return response.data;
+};
 
-export default patchTodoApi
+export default patchTodoApi;

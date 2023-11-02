@@ -1,8 +1,10 @@
-import axios from 'axios'
+import axios from "axios";
 
-const deleteApi = async(id) => {
-  const response = await axios.delete(`http://localhost:8000/todos/${id}`)
+const deleteApi = async (id) => {
+  const response = await axios.delete(
+    `https://user-management-server-sand.vercel.app/todos/${id}`
+  );
   return response.data;
-}
+};
 
-export default deleteApi
+export default deleteApi;

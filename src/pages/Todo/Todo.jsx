@@ -10,6 +10,7 @@ const Todo = () => {
   const [current, setCurrent] = useState('')
   const [isEditable, setIsEditable] = useState(false);
   const [taskTitle, setTaskTitle] = useState('')
+  const [showProfile, setShowProfile] = useState(false);
   const handleModal = ()=>{
     setIsOpen(true)
   }
@@ -60,13 +61,15 @@ const Todo = () => {
           <div className="avatar relative">
             <div className="w-24 rounded-full">
               <img
+                onClick={()=>setShowProfile(!showProfile)}
                 id="avatar"
                 className="cursor-pointer"
                 src="../img/avatar.jpg"
               />
+              {/* Options  */}
               <div
                 id="profile-menu"
-                className="bg-[#fff] drop-shadow-lg text-black p-4 absolute lg:left-24 md:left-24 left-2 lg:top-[20px] md:top-[20px] top-[100%] lg:rounded-tr-full lg:rounded-br-full md:rounded-tr-full md:rounded-br-full rounded-br-full lg:rounded-bl-none rounded-bl-full hidden"
+                className={`bg-[#fff] drop-shadow-lg text-black p-4 absolute lg:left-24 md:left-24 left-2 lg:top-[20px] md:top-[20px] top-[100%] lg:rounded-tr-full lg:rounded-br-full md:rounded-tr-full md:rounded-br-full rounded-br-full lg:rounded-bl-none rounded-bl-full ${showProfile ? '' : 'hidden'}`}
               >
                 <ul className="flex lg:flex-row md:flex-row flex-col gap-3">
                   <li className="cursor-pointer hover:text-[#9500FF]">

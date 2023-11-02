@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 
 const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
   const [visibleOptions, setVisibleOptions] = useState(false);
-  const { id, title, priority, createdAt, completed } = todo || {};
+  const { _id, title, priority, createdAt, completed } = todo || {};
   //Mutations
   const deleteMutation = useMutation({
     mutationFn: deleteApi,
@@ -84,7 +84,7 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
           className="fa-regular fa-pen-to-square text-[#a6a9b3] cursor-pointer"
         ></i>
         <i
-          onClick={() => handleDelete(id)}
+          onClick={() => handleDelete(_id)}
           className="fa-solid fa-xmark text-[#a6a9b3] cursor-pointer"
         ></i>
       </div>
