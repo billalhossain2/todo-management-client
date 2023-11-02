@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Modal from "../../components/Modal";
 import TodoItem from "../../components/TodoItem";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import getTodosApi from "../../api/getTodosApi";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { authContext } from "../../provider/AuthProvider";
+import moment from "moment/moment";
 const Todo = () => {
+  const {user} = useContext(authContext)
   const [isOpen, setIsOpen] = useState(false)
   const [current, setCurrent] = useState('')
   const [isEditable, setIsEditable] = useState(false);
@@ -87,7 +90,7 @@ const Todo = () => {
           </div>
           {/* <!-- avatar end  --> */}
 
-          <h3 className="mb-3">Good Evening, Billal</h3>
+          <h3 className="mb-3">Good Evening, {user?.displayName}</h3>
           {/* <!-- search field start  --> */}
           <div className="form-control mb-7">
             <input
@@ -100,7 +103,7 @@ const Todo = () => {
 
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-[#A2A2BA]"> 28.07.2023 </p>
+              <p className="text-[#A2A2BA]"> {moment().format('LL')} </p>
               <h1 className="font-semibold lg:text-3xl text-2xl">
                 Today Tasks
               </h1>

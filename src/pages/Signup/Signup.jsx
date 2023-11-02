@@ -66,7 +66,7 @@ const Signup = () => {
           .then(() => {
             setSuccess("Registration successful!");
             toast.success("Registration success!", { autoClose: 1000 });
-            console.log(user)
+            console.log("From Signup =======> ", email, file)
           })
           .catch(error => {
             setError(error.message)
