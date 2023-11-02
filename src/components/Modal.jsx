@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import Priority from "./Priority";
 import { useMutation } from "@tanstack/react-query";
 import postTodoApi from "../api/postTodoApi";
@@ -6,6 +6,7 @@ import queryClient from "../client/queryClient";
 import updateApi from "../api/updateApi";
 import { FaCross } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { authContext } from "../provider/AuthProvider";
 const Modal = ({
   isOpen,
   setIsOpen,
@@ -23,6 +24,7 @@ const Modal = ({
     { id: 4, title: "LOWEST" },
   ];
   const taskTitleRef = useRef();
+  const {user} = useContext(authContext)
   //Mutations
   const mutation = useMutation({
     mutationFn: postTodoApi,
@@ -35,6 +37,7 @@ const Modal = ({
     const priority = current;
     const time = new Date().toLocaleTimeString();
     const newTodo = {
+      email:user?.email,
       title: taskTitle,
       priority: priority,
       createdAt: time,
@@ -68,7 +71,6 @@ const Modal = ({
       const res = await updateMutation.mutateAsync(updateTodo);
       toast.success("Updated Successfully", { autoClose: 1000 });
     } catch (error) {
-      console.log("Update error=========> ", error)
       toast.error(error.message, { autoClose: 2000 });
     }
     setIsEditable(false);

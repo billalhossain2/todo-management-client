@@ -62,7 +62,7 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
         {todo.completed ? (
           <i
             onClick={() => toggleComplete(todo)}
-            class="fa-solid fa-square-check text-green-700 text-2xl cursor-pointer"
+            className="fa-solid fa-square-check text-green-700 text-2xl cursor-pointer"
           ></i>
         ) : (
           <i
@@ -100,7 +100,7 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
           {todo.completed ? (
           <i
             onClick={() => toggleComplete(todo)}
-            class="fa-solid fa-square-check text-green-700 text-2xl cursor-pointer"
+            className="fa-solid fa-square-check text-green-700 text-2xl cursor-pointer"
           ></i>
         ) : (
           <i

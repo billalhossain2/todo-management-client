@@ -6,18 +6,21 @@ import "react-toastify/dist/ReactToastify.css";
 import { authContext } from "../../provider/AuthProvider";
 import Error from "../../components/Error";
 import Success from "../../components/Success";
+import axios from "axios";
 
 const Signup = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const { user, registerWithEmailAndPwd, updateUser } = useContext(authContext);
   const [file, setFile] = useState("");
+  const [fileObj, setfileObj] = useState('')
   const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
 
   const fileChangeHandler = (e) => {
     const file = e.target.files[0];
+    setfileObj(file)
     const reader = new FileReader();
     const data = reader.readAsDataURL(file);
     reader.onload = (ev) => {
@@ -58,20 +61,21 @@ const Signup = () => {
     } else if (password.length < 6) {
       return setError("Your password should be at least 6 character longer");
     }
+    const imgSize = parseInt(fileObj.size/1024);//KB size
+
+    if(imgSize > 200){
+      return setError('Your file should be less than 200 KB')
+    }
 
     registerWithEmailAndPwd(email, password)
       .then((userCredential) => {
-        //Update user profile info
-        updateUser({ displayName: name, photoURL: file })
-          .then(() => {
+        axios
+          .post("http://localhost:9000/signup", { email: email, name:name, photo: file })
+          .then((res) =>{
             setSuccess("Registration successful!");
-            toast.success("Registration success!", { autoClose: 1000 });
-            console.log("From Signup =======> ", email, file)
+            toast.success("Registration successful!", { autoClose: 1000 });
           })
-          .catch(error => {
-            setError(error.message)
-            toast.error(error.message, { autoClose: 1000 });
-          });
+          .catch((error) => console.log(error));
       })
       .catch((error) => {
         setError(error.message);

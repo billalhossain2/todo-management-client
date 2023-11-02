@@ -1,19 +1,23 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Modal from "../../components/Modal";
 import TodoItem from "../../components/TodoItem";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import getTodosApi from "../../api/getTodosApi";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { authContext } from "../../provider/AuthProvider";
 import moment from "moment/moment";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const Todo = () => {
-  const {user} = useContext(authContext)
+  const {user, logOutUser} = useContext(authContext)
   const [isOpen, setIsOpen] = useState(false)
   const [current, setCurrent] = useState('')
   const [isEditable, setIsEditable] = useState(false);
   const [taskTitle, setTaskTitle] = useState('')
   const [showProfile, setShowProfile] = useState(false);
+  const [loggedUser, setLoggedUser] = useState(null);
+  const navigate = useNavigate()
   const handleModal = ()=>{
     setIsOpen(true)
   }
@@ -28,9 +32,27 @@ const Todo = () => {
   //fetch todos
   const {isLoading, isError, error, data:todos} = useQuery({
     queryKey:['Todos'],
-    queryFn:getTodosApi,
+    queryFn:()=>getTodosApi(user?.email),
   }) || {}
-  
+
+  useEffect(()=>{
+    fetch(`http://localhost:9000/users/${user?.email}`)
+    .then(res => res.json())
+    .then(data => {
+      setLoggedUser(data)
+    })
+    .catch(error => console.log(error))
+  }, [])
+
+  //Logout User
+  const handleLogout = ()=>{
+    logOutUser()
+    .then(()=>{
+      toast.success("Logout Successfully", {autoClose:1000});
+      navigate("/")
+    })
+    .catch(error => toast(error.message))
+  }
   return (
     <div className="bg-[#ece8eedc] min-h-screen flex justify-center items-center flex-col">
       <div className="bg-[#F5F7FA] rounded-3xl lg:p-6 p-3 flex flex-col relative drop-shadow-lg lg:min-w-[500px] min-w-[95%] my-2 md:min-w-[500px] text-[#1E1A52]">
@@ -67,7 +89,7 @@ const Todo = () => {
                 onClick={()=>setShowProfile(!showProfile)}
                 id="avatar"
                 className="cursor-pointer"
-                src="../img/avatar.jpg"
+                src={loggedUser?.photo}
               />
               {/* Options  */}
               <div
@@ -82,7 +104,7 @@ const Todo = () => {
                     Setting
                   </li>
                   <li className="cursor-pointer hover:text-[#9500FF]">
-                    <a href="../index.html">Logout</a>
+                    <button onClick={handleLogout}>Logout</button>
                   </li>
                 </ul>
               </div>
@@ -90,7 +112,7 @@ const Todo = () => {
           </div>
           {/* <!-- avatar end  --> */}
 
-          <h3 className="mb-3">Good Evening, {user?.displayName}</h3>
+          <h3 className="mb-3">Good Evening, {loggedUser?.name}</h3>
           {/* <!-- search field start  --> */}
           <div className="form-control mb-7">
             <input
@@ -125,7 +147,7 @@ const Todo = () => {
             todos?.length === 0 && <p className="text-center text-gray-400 font-bold text-2xl">No Tasks Available</p>
           }
         {
-          todos?.map(todo => <TodoItem key={todo.id} todo={todo} handleEditTodo={handleEditTodo} isEditable={isEditable} setIsEditable={setIsEditable}></TodoItem>)
+          todos?.map(todo => <TodoItem key={todo._id} todo={todo} handleEditTodo={handleEditTodo} isEditable={isEditable} setIsEditable={setIsEditable}></TodoItem>)
         }
       </main>
        }
