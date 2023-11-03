@@ -7,6 +7,7 @@ import updateApi from "../api/updateApi";
 import { FaCross } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { authContext } from "../provider/AuthProvider";
+import Swal from "sweetalert2";
 const Modal = ({
   isOpen,
   setIsOpen,
@@ -34,22 +35,27 @@ const Modal = ({
     },
   });
   const handleCreateTask = async () => {
+    if(!current || !taskTitle){
+      return Swal.fire("Task title and priority are mandatory!")
+    }
     const priority = current;
-    const time = new Date().toLocaleTimeString();
     const newTodo = {
       email:user?.email,
       title: taskTitle,
       priority: priority,
-      createdAt: time,
+      createdAt: new Date(),
       completed: false,
     };
     //Add new todo
     try {
       const res = await mutation.mutateAsync(newTodo);
       toast.success("Added Successfully", { autoClose: 1000 });
+      setCurrent("")
+      setTaskTitle("")
     } catch (error) {
       toast.error(error.message, { autoClose: 2000 });
     }
+    setIsOpen(false);
   };
 
   //update mutation
@@ -70,17 +76,17 @@ const Modal = ({
     try {
       const res = await updateMutation.mutateAsync(updateTodo);
       toast.success("Updated Successfully", { autoClose: 1000 });
+      setTaskTitle("");
+      setCurrent("");
+      setIsEditable(false);
     } catch (error) {
       toast.error(error.message, { autoClose: 2000 });
     }
-    setIsEditable(false);
-    setTaskTitle("");
+    setIsOpen(false);
   };
 
   const handleSubmit = (e) => {
     !isEditable ? handleCreateTask() : handleUpdateTodo();
-    setIsOpen(false);
-    setCurrent("");
   };
 
   const handleModalHide = ()=>{

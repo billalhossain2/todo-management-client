@@ -6,6 +6,7 @@ import updateApi from "../api/updateApi";
 import patchTodoApi from "../api/patchTodoApi";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import moment from "moment";
 
 const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
   const [visibleOptions, setVisibleOptions] = useState(false);
@@ -73,7 +74,7 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
       </div>
       <div className="lg:border-l-[3px] flex-1 lg:border-b-[0] border-b-[3px] lg:pb-0 pb-3 border-solid border-[#9500FF] odd:border-[#eefe] lg:pl-3 pl-1">
         <h1 className={`md:text-[18px] text-[14px] font-bold ${completed && 'line-through'}`}>{title}</h1>
-        <p>{createdAt}</p>
+        <p>{moment(createdAt).fromNow()}</p>
         <p className="font-medium text-[14px] lg:text-[16px]">
           {priority} Priority
         </p>

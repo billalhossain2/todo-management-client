@@ -9,6 +9,7 @@ import { authContext } from "../../provider/AuthProvider";
 import moment from "moment/moment";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import Greeting from "../../components/Greeting";
 const Todo = () => {
   const { user, logOutUser } = useContext(authContext);
   const [isOpen, setIsOpen] = useState(false);
@@ -118,8 +119,7 @@ const Todo = () => {
             </div>
           </div>
           {/* <!-- avatar end  --> */}
-
-          <h3 className="mb-3">Good Evening, {loggedUser?.name}</h3>
+          <Greeting user={loggedUser?.name}></Greeting>
           {/* <!-- search field start  --> */}
           <div className="form-control mb-7">
             <input
@@ -133,8 +133,8 @@ const Todo = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <p className="text-[#A2A2BA]"> {moment().format("LL")} </p>
-              <h1 className="font-semibold lg:text-3xl text-2xl">
-                Today Tasks
+              <h1 className="font-semibold lg:text-4xl text-2xl">
+                Today's Tasks
               </h1>
             </div>
           </div>
