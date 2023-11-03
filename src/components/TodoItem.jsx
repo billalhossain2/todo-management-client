@@ -11,7 +11,7 @@ import { themeContext } from "../provider/ThemeProvider";
 
 const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
   const [visibleOptions, setVisibleOptions] = useState(false);
-  const {isDarkMode} = useContext(themeContext)
+  const { isDarkMode } = useContext(themeContext);
   const { _id, title, priority, createdAt, completed } = todo || {};
   //Mutations
   const deleteMutation = useMutation({
@@ -21,6 +21,19 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
       queryClient.invalidateQueries({ queryKey: ["Todos"] });
     },
   });
+
+  //Set Css Link
+  function setCssLink() {
+    const link = document.createElement("link");
+    if (isDarkMode) {
+      link.innerHTML =
+        '<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">';
+    } else {
+      link.innerHTML =
+        '<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@sweetalert2/theme-minimal/minimal.css">';
+    }
+    document.head.appendChild(link);
+  }
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -30,13 +43,17 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
+      willOpen: () => setCssLink(),
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const res = await deleteMutation.mutateAsync(id);
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
         } catch (error) {
-          toast.error(error.message, { autoClose: 2000, theme: isDarkMode ? "dark" : "light" });
+          toast.error(error.message, {
+            autoClose: 2000,
+            theme: isDarkMode ? "dark" : "light",
+          });
         }
       }
     });
@@ -53,9 +70,15 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
   const toggleComplete = async (todo) => {
     try {
       const res = await mutateAsync(todo);
-      toast.success("Toggled Successfully", { autoClose: 1000, theme: isDarkMode ? "dark" : "light" });
+      toast.success("Toggled Successfully", {
+        autoClose: 1000,
+        theme: isDarkMode ? "dark" : "light",
+      });
     } catch (error) {
-      toast.error(error.message, { autoClose: 2000, theme: isDarkMode ? "dark" : "light" });
+      toast.error(error.message, {
+        autoClose: 2000,
+        theme: isDarkMode ? "dark" : "light",
+      });
     }
   };
 
@@ -74,8 +97,18 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
           ></i>
         )}
       </div>
-      <div className={`${isDarkMode ? "text-gray-300" : ""} lg:border-l-[3px] flex-1 lg:border-b-[0] border-b-[3px] lg:pb-0 pb-3 border-solid border-[#9500FF] odd:border-[#eefe] lg:pl-3 pl-1`}>
-        <h1 className={`md:text-[18px] text-[14px] font-bold ${completed && 'line-through'}`}>{title}</h1>
+      <div
+        className={`${
+          isDarkMode ? "text-gray-300" : ""
+        } lg:border-l-[3px] flex-1 lg:border-b-[0] border-b-[3px] lg:pb-0 pb-3 border-solid border-[#9500FF] odd:border-[#eefe] lg:pl-3 pl-1`}
+      >
+        <h1
+          className={`md:text-[18px] text-[14px] font-bold ${
+            completed && "line-through"
+          }`}
+        >
+          {title}
+        </h1>
         <p>{moment(createdAt).fromNow()}</p>
         <p className="font-medium text-[14px] lg:text-[16px]">
           {priority} Priority
@@ -93,26 +126,37 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
       </div>
       {/* <!-- dropdown start  --> */}
       <div className={`relative text-2xl lg:hidden md:hidden`}>
-        <div onClick={()=>setVisibleOptions(!visibleOptions)} className="mb-2">
+        <div
+          onClick={() => setVisibleOptions(!visibleOptions)}
+          className="mb-2"
+        >
           <i className="three-dot fa-solid fa-ellipsis"></i>
         </div>
         <div
-          className={`${visibleOptions ? '' : 'hidden'} duration-1000 drop-shadow-lg bg-white text-[#a6a9b3] w-40 flex justify-evenly absolute right-7 p-3
+          className={`${
+            visibleOptions ? "" : "hidden"
+          } duration-1000 drop-shadow-lg bg-white text-[#a6a9b3] w-40 flex justify-evenly absolute right-7 p-3
           top-[-5px]`}
         >
           {todo.completed ? (
+            <i
+              onClick={() => toggleComplete(todo)}
+              className="fa-solid fa-square-check text-green-700 text-2xl cursor-pointer"
+            ></i>
+          ) : (
+            <i
+              onClick={() => toggleComplete(todo)}
+              className="fa-regular fa-square text-[#a6a9b3] text-2xl cursor-pointer"
+            ></i>
+          )}
           <i
-            onClick={() => toggleComplete(todo)}
-            className="fa-solid fa-square-check text-green-700 text-2xl cursor-pointer"
+            onClick={() => handleEditTodo(todo)}
+            className="fa-regular fa-pen-to-square  cursor-pointer hover:text-[#9500ff]"
           ></i>
-        ) : (
           <i
-            onClick={() => toggleComplete(todo)}
-            className="fa-regular fa-square text-[#a6a9b3] text-2xl cursor-pointer"
+            onClick={() => handleDelete(id)}
+            className="fa-solid fa-xmark cursor-pointer hover:text-[#9500ff]"
           ></i>
-        )}
-          <i onClick={() => handleEditTodo(todo)} className="fa-regular fa-pen-to-square  cursor-pointer hover:text-[#9500ff]"></i>
-          <i onClick={() => handleDelete(id)} className="fa-solid fa-xmark cursor-pointer hover:text-[#9500ff]"></i>
         </div>
       </div>
       {/* <!-- dropdown end  --> */}
