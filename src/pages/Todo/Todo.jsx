@@ -117,9 +117,9 @@ const Todo = () => {
             {
               isDarkMode 
               ? 
-              <BsSun onClick={handleDarkMode} className={`text-3xl ${isDarkMode ? "text-white" : ""}`}></BsSun>
+              <BsSun onClick={handleDarkMode} className={`text-3xl cursor-pointer ${isDarkMode ? "text-white" : ""}`}></BsSun>
               :
-              <BsMoonStars onClick={handleDarkMode} className={`text-3xl ${isDarkMode ? "text-white" : ""}`}></BsMoonStars>
+              <BsMoonStars onClick={handleDarkMode} className={`text-3xl cursor-pointer ${isDarkMode ? "text-white" : ""}`}></BsMoonStars>
             }
               
           </div>
