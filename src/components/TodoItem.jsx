@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import deleteApi from "../api/deleteApi";
 import queryClient from "../client/queryClient";
 import updateApi from "../api/updateApi";
@@ -7,9 +7,11 @@ import patchTodoApi from "../api/patchTodoApi";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import moment from "moment";
+import { themeContext } from "../provider/ThemeProvider";
 
 const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
   const [visibleOptions, setVisibleOptions] = useState(false);
+  const {isDarkMode} = useContext(themeContext)
   const { _id, title, priority, createdAt, completed } = todo || {};
   //Mutations
   const deleteMutation = useMutation({
@@ -34,7 +36,7 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
           const res = await deleteMutation.mutateAsync(id);
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
         } catch (error) {
-          toast.error(error.message, { autoClose: 2000 });
+          toast.error(error.message, { autoClose: 2000, theme: isDarkMode ? "dark" : "light" });
         }
       }
     });
@@ -51,14 +53,14 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
   const toggleComplete = async (todo) => {
     try {
       const res = await mutateAsync(todo);
-      toast.success("Toggled Successfully", { autoClose: 1000 });
+      toast.success("Toggled Successfully", { autoClose: 1000, theme: isDarkMode ? "dark" : "light" });
     } catch (error) {
-      toast.error(error.message, { autoClose: 2000 });
+      toast.error(error.message, { autoClose: 2000, theme: isDarkMode ? "dark" : "light" });
     }
   };
 
   return (
-    <div className="todo-item flex items-center rounded-3xl bg-white drop-shadow-lg lg:p-4 p-2 lg:gap-7 gap-3 mb-5 py-5">
+    <div className="todo-item flex items-center rounded-3xl shadow-md border-solid border-[1px] border-gray-300 lg:p-4 p-2 lg:gap-7 gap-3 mb-5 py-5">
       <div className="lg:block md:block hidden">
         {todo.completed ? (
           <i
@@ -72,7 +74,7 @@ const TodoItem = ({ todo, isEditable, setIsEditable, handleEditTodo }) => {
           ></i>
         )}
       </div>
-      <div className="lg:border-l-[3px] flex-1 lg:border-b-[0] border-b-[3px] lg:pb-0 pb-3 border-solid border-[#9500FF] odd:border-[#eefe] lg:pl-3 pl-1">
+      <div className={`${isDarkMode ? "text-gray-300" : ""} lg:border-l-[3px] flex-1 lg:border-b-[0] border-b-[3px] lg:pb-0 pb-3 border-solid border-[#9500FF] odd:border-[#eefe] lg:pl-3 pl-1`}>
         <h1 className={`md:text-[18px] text-[14px] font-bold ${completed && 'line-through'}`}>{title}</h1>
         <p>{moment(createdAt).fromNow()}</p>
         <p className="font-medium text-[14px] lg:text-[16px]">

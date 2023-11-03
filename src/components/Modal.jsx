@@ -8,6 +8,7 @@ import { FaCross } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { authContext } from "../provider/AuthProvider";
 import Swal from "sweetalert2";
+import { themeContext } from "../provider/ThemeProvider";
 const Modal = ({
   isOpen,
   setIsOpen,
@@ -26,6 +27,7 @@ const Modal = ({
   ];
   const taskTitleRef = useRef();
   const {user} = useContext(authContext)
+  const {isDarkMode} = useContext(themeContext);
   //Mutations
   const mutation = useMutation({
     mutationFn: postTodoApi,
@@ -49,11 +51,11 @@ const Modal = ({
     //Add new todo
     try {
       const res = await mutation.mutateAsync(newTodo);
-      toast.success("Added Successfully", { autoClose: 1000 });
+      toast.success("Added Successfully", { autoClose: 1000, theme: isDarkMode ? "dark" : "light" });
       setCurrent("")
       setTaskTitle("")
     } catch (error) {
-      toast.error(error.message, { autoClose: 2000 });
+      toast.error(error.message, { autoClose: 2000, theme: isDarkMode ? "dark" : "light" });
     }
     setIsOpen(false);
   };
@@ -75,12 +77,12 @@ const Modal = ({
     };
     try {
       const res = await updateMutation.mutateAsync(updateTodo);
-      toast.success("Updated Successfully", { autoClose: 1000 });
+      toast.success("Updated Successfully", { autoClose: 1000, theme: isDarkMode ? "dark" : "light" });
       setTaskTitle("");
       setCurrent("");
       setIsEditable(false);
     } catch (error) {
-      toast.error(error.message, { autoClose: 2000 });
+      toast.error(error.message, { autoClose: 2000, theme: isDarkMode ? "dark" : "light" });
     }
     setIsOpen(false);
   };
@@ -100,11 +102,11 @@ const Modal = ({
     <dialog className="modal" open={isOpen}>
       <form
         method="dialog"
-        className="modal-box bg-[#9500FF] overflow-visible relative"
+        className={`modal-box border-solid border-gray-600 border-[1px] shadow-lg overflow-visible relative ${isDarkMode ? "bg-black" : "bg-[#9500FF]"}`}
       >
         <i
           onClick={handleModalHide}
-          className="fa-solid fa-xmark text-white cursor-pointer bg-black hover:bg-red-500 font-bold px-2 py-[1px] rounded-full absolute top-[-20px] right-[-20px] text-xl"
+          className="fa-solid fa-xmark text-white cursor-pointer bg-black hover:bg-red-500 font-bold px-2 py-[1px] rounded-full absolute top-[-20px] right-[-20px] text-xl border-[1px] border-solid border-white"
         ></i>
         <h3 className="font-bold text-lg text-white">Create a new task</h3>
         <div className="border-b-2 border-solid border-[#f7f3f3] mb-10">
@@ -113,7 +115,7 @@ const Modal = ({
             value={taskTitle}
             type="text"
             placeholder="Task name"
-            className="input w-full max-w-xs py-4 bg-[#9500FF] text-[#faf7f7] pl-0 focus:outline-0 placeholder:text-white"
+            className={`input w-full max-w-xs py-4 text-[#faf7f7] pl-0 focus:outline-0 placeholder:text-white ${isDarkMode ? "bg-black" : "bg-[#9500FF]"}`}
           />
         </div>
         <p className="text-white mb-2">Priority</p>
