@@ -13,14 +13,14 @@ const Signup = () => {
   const [success, setSuccess] = useState("");
   const { user, registerWithEmailAndPwd, updateUser } = useContext(authContext);
   const [file, setFile] = useState("");
-  const [fileObj, setfileObj] = useState('')
+  const [fileObj, setfileObj] = useState("");
   const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
 
   const fileChangeHandler = (e) => {
     const file = e.target.files[0];
-    setfileObj(file)
+    setfileObj(file);
     const reader = new FileReader();
     const data = reader.readAsDataURL(file);
     reader.onload = (ev) => {
@@ -61,17 +61,21 @@ const Signup = () => {
     } else if (password.length < 6) {
       return setError("Your password should be at least 6 character longer");
     }
-    const imgSize = parseInt(fileObj.size/1024);//KB size
+    const imgSize = parseInt(fileObj.size / 1024); //KB size
 
-    if(imgSize > 200){
-      return setError('Your file should be less than 200 KB')
+    if (imgSize > 200) {
+      return setError("Your file should be less than 200 KB");
     }
 
     registerWithEmailAndPwd(email, password)
       .then((userCredential) => {
         axios
-          .post("http://localhost:9000/signup", { email: email, name:name, photo: file })
-          .then((res) =>{
+          .post("https://user-management-server-sand.vercel.app/signup", {
+            email: email,
+            name: name,
+            photo: file,
+          })
+          .then((res) => {
             setSuccess("Registration successful!");
             toast.success("Registration successful!", { autoClose: 1000 });
           })

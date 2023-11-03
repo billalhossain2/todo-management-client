@@ -3,56 +3,61 @@ import Modal from "../../components/Modal";
 import TodoItem from "../../components/TodoItem";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import getTodosApi from "../../api/getTodosApi";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { authContext } from "../../provider/AuthProvider";
 import moment from "moment/moment";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const Todo = () => {
-  const {user, logOutUser} = useContext(authContext)
-  const [isOpen, setIsOpen] = useState(false)
-  const [current, setCurrent] = useState('')
+  const { user, logOutUser } = useContext(authContext);
+  const [isOpen, setIsOpen] = useState(false);
+  const [current, setCurrent] = useState("");
   const [isEditable, setIsEditable] = useState(false);
-  const [taskTitle, setTaskTitle] = useState('')
+  const [taskTitle, setTaskTitle] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [loggedUser, setLoggedUser] = useState(null);
-  const navigate = useNavigate()
-  const handleModal = ()=>{
-    setIsOpen(true)
-  }
+  const navigate = useNavigate();
+  const handleModal = () => {
+    setIsOpen(true);
+  };
 
-  const handleEditTodo = (editableTodo)=>{
-    setCurrent(editableTodo.priority.toUpperCase())
-    setTaskTitle(editableTodo.title)
-    setIsEditable(editableTodo)
-    setIsOpen(true)
-  }
+  const handleEditTodo = (editableTodo) => {
+    setCurrent(editableTodo.priority.toUpperCase());
+    setTaskTitle(editableTodo.title);
+    setIsEditable(editableTodo);
+    setIsOpen(true);
+  };
 
   //fetch todos
-  const {isLoading, isError, error, data:todos} = useQuery({
-    queryKey:['Todos'],
-    queryFn:()=>getTodosApi(user?.email),
-  }) || {}
+  const {
+    isLoading,
+    isError,
+    error,
+    data: todos,
+  } = useQuery({
+    queryKey: ["Todos"],
+    queryFn: () => getTodosApi(user?.email),
+  }) || {};
 
-  useEffect(()=>{
-    fetch(`http://localhost:9000/users/${user?.email}`)
-    .then(res => res.json())
-    .then(data => {
-      setLoggedUser(data)
-    })
-    .catch(error => console.log(error))
-  }, [])
+  useEffect(() => {
+    fetch(`https://user-management-server-sand.vercel.app/users/${user?.email}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setLoggedUser(data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   //Logout User
-  const handleLogout = ()=>{
+  const handleLogout = () => {
     logOutUser()
-    .then(()=>{
-      toast.success("Logout Successfully", {autoClose:1000});
-      navigate("/")
-    })
-    .catch(error => toast(error.message))
-  }
+      .then(() => {
+        toast.success("Logout Successfully", { autoClose: 1000 });
+        navigate("/");
+      })
+      .catch((error) => toast(error.message));
+  };
   return (
     <div className="bg-[#ece8eedc] min-h-screen flex justify-center items-center flex-col">
       <div className="bg-[#F5F7FA] rounded-3xl lg:p-6 p-3 flex flex-col relative drop-shadow-lg lg:min-w-[500px] min-w-[95%] my-2 md:min-w-[500px] text-[#1E1A52]">
@@ -86,7 +91,7 @@ const Todo = () => {
           <div className="avatar relative">
             <div className="w-24 rounded-full">
               <img
-                onClick={()=>setShowProfile(!showProfile)}
+                onClick={() => setShowProfile(!showProfile)}
                 id="avatar"
                 className="cursor-pointer"
                 src={loggedUser?.photo}
@@ -94,14 +99,16 @@ const Todo = () => {
               {/* Options  */}
               <div
                 id="profile-menu"
-                className={`bg-[#fff] drop-shadow-lg text-black p-4 absolute lg:left-24 md:left-24 left-2 lg:top-[20px] md:top-[20px] top-[100%] lg:rounded-tr-full lg:rounded-br-full md:rounded-tr-full md:rounded-br-full rounded-br-full lg:rounded-bl-none rounded-bl-full ${showProfile ? '' : 'hidden'}`}
+                className={`bg-[#fff] drop-shadow-lg text-black p-4 absolute lg:left-24 md:left-24 left-2 lg:top-[20px] md:top-[20px] top-[100%] lg:rounded-tr-full lg:rounded-br-full md:rounded-tr-full md:rounded-br-full rounded-br-full lg:rounded-bl-none rounded-bl-full ${
+                  showProfile ? "" : "hidden"
+                }`}
               >
                 <ul className="flex lg:flex-row md:flex-row flex-col gap-3">
                   <li className="cursor-pointer hover:text-[#9500FF]">
-                    Profile
+                    <Link to="/profile">Profile</Link>
                   </li>
                   <li className="cursor-pointer hover:text-[#9500FF]">
-                    Setting
+                    <Link to="/settings">Settings</Link>
                   </li>
                   <li className="cursor-pointer hover:text-[#9500FF]">
                     <button onClick={handleLogout}>Logout</button>
@@ -125,7 +132,7 @@ const Todo = () => {
 
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-[#A2A2BA]"> {moment().format('LL')} </p>
+              <p className="text-[#A2A2BA]"> {moment().format("LL")} </p>
               <h1 className="font-semibold lg:text-3xl text-2xl">
                 Today Tasks
               </h1>
@@ -137,20 +144,26 @@ const Todo = () => {
             <p className="text-[#b3b4c0] cursor-pointer">Incompleted</p>
           </nav>
         </header>
-       {
-        isLoading 
-        ? 
-        <h1>Loading......</h1>
-        :
-        <main className="relative" id="todos-container">
-          {
-            todos?.length === 0 && <p className="text-center text-gray-400 font-bold text-2xl">No Tasks Available</p>
-          }
-        {
-          todos?.map(todo => <TodoItem key={todo._id} todo={todo} handleEditTodo={handleEditTodo} isEditable={isEditable} setIsEditable={setIsEditable}></TodoItem>)
-        }
-      </main>
-       }
+        {isLoading ? (
+          <h1>Loading......</h1>
+        ) : (
+          <main className="relative" id="todos-container">
+            {todos?.length === 0 && (
+              <p className="text-center text-gray-400 font-bold text-2xl">
+                No Tasks Available
+              </p>
+            )}
+            {todos?.map((todo) => (
+              <TodoItem
+                key={todo._id}
+                todo={todo}
+                handleEditTodo={handleEditTodo}
+                isEditable={isEditable}
+                setIsEditable={setIsEditable}
+              ></TodoItem>
+            ))}
+          </main>
+        )}
         <footer className="flex justify-center mt-20 z-[2]">
           <button
             onClick={handleModal}
@@ -161,10 +174,19 @@ const Todo = () => {
           </button>
         </footer>
       </div>
-        {/* <!-- modal start  --> */}
-        <Modal isOpen={isOpen} setIsOpen={setIsOpen} current={current} setCurrent={setCurrent} taskTitle={taskTitle} setTaskTitle={setTaskTitle} isEditable={isEditable} setIsEditable={setIsEditable}></Modal>
-          {/* <!-- modal end  --> */}
-          <ToastContainer></ToastContainer>
+      {/* <!-- modal start  --> */}
+      <Modal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        current={current}
+        setCurrent={setCurrent}
+        taskTitle={taskTitle}
+        setTaskTitle={setTaskTitle}
+        isEditable={isEditable}
+        setIsEditable={setIsEditable}
+      ></Modal>
+      {/* <!-- modal end  --> */}
+      <ToastContainer></ToastContainer>
     </div>
   );
 };

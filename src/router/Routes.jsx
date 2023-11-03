@@ -4,6 +4,8 @@ import Login from "../pages/Login/Login";
 import Todo from "../pages/Todo/Todo";
 import PrivateRoute from "../privateRoute/PrivateRoute";
 import Form from "../components/Form";
+import Profile from "../pages/Profile/Profile";
+import Settings from "../pages/Settings/Settings";
   const router = createBrowserRouter([
     {
       path: "/signup",
@@ -20,6 +22,14 @@ import Form from "../components/Form";
     {
       path: "/form",
       element:<Form></Form>
+    },
+    {
+      path: "/profile",
+      element:<Profile></Profile>
+    },
+    {
+      path: "/settings",
+      element:<Settings></Settings>
     },
   ]);
 

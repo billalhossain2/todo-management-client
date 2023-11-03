@@ -82,6 +82,14 @@ const Modal = ({
     setIsOpen(false);
     setCurrent("");
   };
+
+  const handleModalHide = ()=>{
+    setIsOpen(false)
+    setIsEditable(false);
+    setTaskTitle("");
+    setCurrent("")
+    
+  }
   return (
     <dialog className="modal" open={isOpen}>
       <form
@@ -89,7 +97,7 @@ const Modal = ({
         className="modal-box bg-[#9500FF] overflow-visible relative"
       >
         <i
-          onClick={() => setIsOpen(false)}
+          onClick={handleModalHide}
           className="fa-solid fa-xmark text-white cursor-pointer bg-black hover:bg-red-500 font-bold px-2 py-[1px] rounded-full absolute top-[-20px] right-[-20px] text-xl"
         ></i>
         <h3 className="font-bold text-lg text-white">Create a new task</h3>
