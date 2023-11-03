@@ -7,7 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { authContext } from "../../provider/AuthProvider";
 import moment from "moment/moment";
-import axios from "axios";
+import axios, { all } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Greeting from "../../components/Greeting";
 const Todo = () => {
@@ -18,6 +18,9 @@ const Todo = () => {
   const [taskTitle, setTaskTitle] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [loggedUser, setLoggedUser] = useState(null);
+  const [todos, setTodos] = useState([]);
+  const [filter, setFilter] = useState("All");
+
   const navigate = useNavigate();
   const handleModal = () => {
     setIsOpen(true);
@@ -30,16 +33,24 @@ const Todo = () => {
     setIsOpen(true);
   };
 
-  //fetch todos
+  // fetch todos
   const {
     isLoading,
     isError,
     error,
-    data: todos,
+    data: allTodos,
   } = useQuery({
     queryKey: ["Todos"],
     queryFn: () => getTodosApi(user?.email),
   }) || {};
+
+  useEffect(()=>{
+    setTodos(allTodos)
+  }, [allTodos])
+
+  // useEffect(() => {
+  //   setTodos(allTodos)
+  // }, [allTodos]);
 
   useEffect(() => {
     fetch(`https://user-management-server-sand.vercel.app/users/${user?.email}`)
@@ -58,6 +69,34 @@ const Todo = () => {
         navigate("/");
       })
       .catch((error) => toast(error.message));
+  };
+
+  //Search by title
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const searchedTitle = form.search.value;
+    axios.get(`https://user-management-server-sand.vercel.app/searchByTitle?email=${user?.email}&title=${searchedTitle}`)
+    .then(response => {
+      setTodos(response.data)
+    })
+    .catch(error => {
+      toast.error(error.message, {autoClose:1000})
+    })
+  };
+
+  //Search by title
+  const handleFilterByComplete = (e) => {
+    e.preventDefault();
+    const filterTxt = e.target.innerText;
+    setFilter(filterTxt)
+    axios.get(`https://user-management-server-sand.vercel.app/filterByComplete?email=${user?.email}&filterTxt=${filterTxt}`)
+    .then(response => {
+      setTodos(response.data)
+    })
+    .catch(error => {
+      toast.error(error.message, {autoClose:1000})
+    })
   };
   return (
     <div className="bg-[#ece8eedc] min-h-screen flex justify-center items-center flex-col">
@@ -121,13 +160,16 @@ const Todo = () => {
           {/* <!-- avatar end  --> */}
           <Greeting user={loggedUser?.name}></Greeting>
           {/* <!-- search field start  --> */}
-          <div className="form-control mb-7">
-            <input
-              type="text"
-              placeholder="Search…"
-              className="input input-bordered rounded-full bg-white"
-            />
-          </div>
+          <form action="#" onSubmit={handleSearch}>
+            <div className="form-control mb-7">
+              <input
+                type="text"
+                name="search"
+                placeholder="Search todo"
+                className="input input-bordered rounded-full bg-white"
+              />
+            </div>
+          </form>
           {/* <!-- search field end  --> */}
 
           <div className="flex items-center justify-between mb-6">
@@ -139,9 +181,9 @@ const Todo = () => {
             </div>
           </div>
           <nav className="flex gap-5 mb-6">
-            <p className="text-[#434270] cursor-pointer">All</p>
-            <p className="text-[#b3b4c0] cursor-pointer">Completed</p>
-            <p className="text-[#b3b4c0] cursor-pointer">Incompleted</p>
+            <p onClick={handleFilterByComplete} className={`${filter==="All" ? "text-[#434270] font-bold" : "text-[#b3b4c0]"} cursor-pointer`}>All</p>
+            <p onClick={handleFilterByComplete} className={`${filter==="Completed" ? "text-[#434270] font-bold" : "text-[#b3b4c0]"} cursor-pointer`}>Completed</p>
+            <p onClick={handleFilterByComplete} className={`${filter==="Incompleted" ? "text-[#434270] font-bold" : "text-[#b3b4c0]"} cursor-pointer`}>Incompleted</p>
           </nav>
         </header>
         {isLoading ? (
